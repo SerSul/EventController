@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OrganiserRepository extends JpaRepository<Organiser, Long> {
 
+    public Organiser getOrganiserByUserId(Long id);
 }

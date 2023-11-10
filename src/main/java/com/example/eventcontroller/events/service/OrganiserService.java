@@ -18,6 +18,10 @@ public class OrganiserService {
     @Autowired
     OrganiserRepository organiserRepository;
 
+    public Organiser getOrganiserByUserId(Long id)
+    {
+        return organiserRepository.getOrganiserByUserId(id);
+    }
 
     public Organiser createOrganiser(Organiser organiser)
     {
