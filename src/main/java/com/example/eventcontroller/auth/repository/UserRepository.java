@@ -1,7 +1,7 @@
 package com.example.eventcontroller.auth.repository;
 
 
-import com.example.eventcontroller.auth.models.User;
+import com.example.eventcontroller.events.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

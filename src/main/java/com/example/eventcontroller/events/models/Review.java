@@ -1,6 +1,5 @@
 package com.example.eventcontroller.events.models;
 
-import com.example.eventcontroller.auth.models.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

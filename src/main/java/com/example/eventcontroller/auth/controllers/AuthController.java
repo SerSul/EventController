@@ -4,7 +4,7 @@ package com.example.eventcontroller.auth.controllers;
 
 import com.example.eventcontroller.auth.models.ERole;
 import com.example.eventcontroller.auth.models.Role;
-import com.example.eventcontroller.auth.models.User;
+import com.example.eventcontroller.events.models.User;
 import com.example.eventcontroller.auth.payload.request.*;
 import com.example.eventcontroller.auth.payload.response.JwtResponse;
 import com.example.eventcontroller.auth.payload.response.MessageResponse;

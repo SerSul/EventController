@@ -1,11 +1,9 @@
-package com.example.eventcontroller.auth.models;
+package com.example.eventcontroller.events.models;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import com.example.eventcontroller.events.models.Attendance;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.example.eventcontroller.auth.models.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -41,11 +39,8 @@ public class User {
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-
     private Set<Role> roles = new HashSet<>();
 
-    @OneToMany(mappedBy = "user")
-    private List<Attendance> attendances;
 
     public User() {
     }

@@ -53,10 +53,13 @@ public class JwtUtils {
   }
 
   // Метод для извлечения идентификатора пользователя из JWT-токена
-  public Long getUserIdFromJwtToken(String token) {
-    Claims claims = Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(token).getBody();
-    return claims.get("user_id", Long.class);
-  }
+    public Long getUserIdFromJwtToken(String token) {
+      if (token.startsWith("Bearer ")) {
+        token = token.substring(7);
+      }
+      Claims claims = Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(token).getBody();
+      return claims.get("user_id", Long.class);
+    }
 
   // Метод для проверки действительности JWT-токена и возврата результата проверки
   public JwtValidationResult validateJwtToken(String authToken) {

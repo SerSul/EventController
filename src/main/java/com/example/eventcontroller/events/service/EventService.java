@@ -21,12 +21,10 @@ public class EventService {
 
 
     public Event createEvent(Event event) {
-        // Добавьте бизнес-логику, если необходимо, например, валидацию данных
         return eventRepository.save(event);
     }
 
     public Event getEvent(Long eventId) {
-        // Добавьте обработку случая, если мероприятие не найдено
         return eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event not found"));
     }
 

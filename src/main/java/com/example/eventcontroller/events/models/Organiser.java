@@ -10,8 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @NoArgsConstructor
-public class Attendance {
-
+public class Organiser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,18 +30,14 @@ public class Attendance {
     @Enumerated(EnumType.STRING)
     private EARole role;
 
-    public Attendance(User user, String first_name, String last_name, int age) {
+
+    public Organiser(User user, String first_name, String last_name, int age) {
         this.user = user;
         this.first_name = first_name;
         this.last_name = last_name;
         this.age = age;
-        this.role=EARole.ROLE_VISITOR;
+        this.role=EARole.ROLE_ORGANISER;
     }
-
-    @ManyToOne
-    @JoinColumn(name = "event_id")
-    private Event event;
-
 
 
 }

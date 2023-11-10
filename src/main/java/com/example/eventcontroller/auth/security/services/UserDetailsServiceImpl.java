@@ -1,6 +1,6 @@
 package com.example.eventcontroller.auth.security.services;
 
-import com.example.eventcontroller.auth.models.User;
+import com.example.eventcontroller.events.models.User;
 import com.example.eventcontroller.auth.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
