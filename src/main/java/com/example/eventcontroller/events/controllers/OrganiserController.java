@@ -7,12 +7,15 @@ import com.example.eventcontroller.events.models.Event;
 import com.example.eventcontroller.events.models.Organiser;
 import com.example.eventcontroller.events.payload.Dtos.CreateEventDTO;
 
+import com.example.eventcontroller.events.payload.response.JsonResponseHandler;
+import com.example.eventcontroller.events.repository.EventRepository;
 import com.example.eventcontroller.events.service.EventService;
 import com.example.eventcontroller.events.service.OrganiserService;
-import io.jsonwebtoken.Jwt;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,6 +30,13 @@ import java.util.List;
 @PreAuthorize("isAuthenticated()")
 public class OrganiserController {
 
+
+
+    @Autowired
+    private JsonResponseHandler jsonResponseHandler;
+
+    @Autowired
+    EventRepository eventRepository;
     @Autowired
     private EventService eventService;
     @Autowired
@@ -60,25 +70,38 @@ public class OrganiserController {
     @Valid
     @Transactional
     @PutMapping("/{eventId}/editEvent")
+    @PreAuthorize("@eventSecurityService.isEventBelongToUser(authentication.principal, #eventId)")
     public ResponseEntity<?> editEvent(@PathVariable Long eventId, @RequestBody CreateEventDTO eventDto) {
-        return null;
+        return ResponseEntity.ok("da");
     }
     @Valid
     @Transactional
+    @PreAuthorize("@eventSecurityService.isEventBelongToUser(authentication.principal, #eventId)")
     @DeleteMapping("/{eventId}/deleteEvent")
-    public ResponseEntity<?> deleteEvent(@PathVariable Long eventId,
-                                         @RequestHeader(value = "Authorization") String authorizationHeader){
+    public ResponseEntity<?> deleteEvent(@PathVariable Long eventId, @RequestHeader(value = "Authorization") String authorizationHeader) {
+        boolean eventDeleted = eventService.deleteEvent(eventId);
 
-        Long organiserId = organiserService.getOrganiserByUserId(jwtUtils.getUserIdFromJwtToken(authorizationHeader)).getId();
-        return ResponseEntity.ok(eventService.deleteEvent(eventId, organiserId));
+        if (eventDeleted) {
+            return jsonResponseHandler.createSuccessResponseWMessage("Событие удалено");
+        } else {
+            return jsonResponseHandler.createNotFoundResponse("Событие не найдено");
+        }
     }
+
 
     @GetMapping("/getAllEvents")
-    public  ResponseEntity<?> getAllEvents(@RequestHeader(value = "Authorization") String authorizationHeader)
-    {
+    public ResponseEntity<?> getAllEvents(@RequestHeader(value = "Authorization") String authorizationHeader) {
+        Long organiserId = organiserService.getOrganiserByUserId(jwtUtils.getUserIdFromJwtToken(authorizationHeader)).getId();
+        List<Event> events = eventService.getEventsByOrganiserId(organiserId);
 
-        return null;
+        if (!events.isEmpty()) {
+            return jsonResponseHandler.createSuccessResponse(events);
+        } else {
+            return jsonResponseHandler.createNotFoundResponse("События не найдены");
+        }
     }
+
+
 
 }
 

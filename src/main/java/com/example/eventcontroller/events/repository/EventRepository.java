@@ -11,7 +11,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     List<Event> getEventsByOrganiserId(Long id);
 
-    Boolean existsByIdAndOrganiserId(Long eventId, Long id);
-    void deleteEventByIdAndOrganiserId(Long eventId, Long id);
+    Boolean existsById(Long eventId, Long id);
+    void deleteEventById(Long eventId);
 
 }

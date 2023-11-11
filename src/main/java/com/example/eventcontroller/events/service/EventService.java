@@ -37,31 +37,23 @@ public class EventService {
         return eventRepository.save(existingEvent);
     }
 
-    public String deleteEvent(Long eventId, Long organiserId) {
-        boolean eventExists = eventRepository.existsByIdAndOrganiserId(eventId, organiserId);
-
-        ObjectMapper mapper = new ObjectMapper();
-        ObjectNode response = mapper.createObjectNode();
+    public boolean deleteEvent(Long eventId) {
+        boolean eventExists = eventRepository.existsById(eventId);
 
         if (eventExists) {
-            eventRepository.deleteEventByIdAndOrganiserId(eventId, organiserId);
-            response.put("message", "Событие удалено");
+            eventRepository.deleteEventById(eventId);
+            return true;
         } else {
-            response.put("message", "Событие не найдено");
-        }
-
-        try {
-            return mapper.writeValueAsString(response);
-        } catch (Exception e) {
-            return "{\"message\": \"Ошибка обработки данных\"}";
+            return false;
         }
     }
+
 
     public List<Event> getAllEvents() {
         return eventRepository.findAll();
     }
 
-    public List<Event> getEventByOrganiserId(Long id) {
+    public List<Event> getEventsByOrganiserId(Long id) {
         return eventRepository.getEventsByOrganiserId(id);
     }
 }
