@@ -4,13 +4,14 @@ package com.example.eventcontroller.auth.controllers;
 
 import com.example.eventcontroller.auth.models.ERole;
 import com.example.eventcontroller.auth.models.Role;
-import com.example.eventcontroller.events.models.User;
+import com.example.eventcontroller.auth.models.User;
 import com.example.eventcontroller.auth.payload.request.*;
 import com.example.eventcontroller.auth.payload.response.JwtResponse;
-import com.example.eventcontroller.auth.payload.response.MessageResponse;
 import com.example.eventcontroller.auth.repository.*;
 import com.example.eventcontroller.auth.security.jwt.JwtUtils;
 import com.example.eventcontroller.auth.security.services.UserDetailsImpl;
+import com.example.eventcontroller.events.payload.response.MessageResponse;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -46,6 +47,7 @@ public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
 
+    @Transactional
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
@@ -66,19 +68,19 @@ public class AuthController {
                 userDetails.getEmail(),
                 roles));
     }
-
+    @Transactional
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Имя пользователя занято"));
+                    .body(new MessageResponse("error","Имя пользователя занято"));
         }
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Почта занята"));
+                    .body(new MessageResponse("error","Почта занята"));
         }
 
         User user = new User(signUpRequest.getUsername(),
@@ -94,6 +96,6 @@ public class AuthController {
         user.setRoles(roles);
         userRepository.save(user);
 
-        return ResponseEntity.ok(new MessageResponse("Пользователь успешно зарегестрирован"));
+        return ResponseEntity.ok(new MessageResponse("success","Пользователь успешно зарегестрирован"));
     }
 }
