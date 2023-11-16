@@ -8,5 +8,4 @@ public class CreateProfileDTO {
     private String firstName;
     private String secondName;
     private int age;
-    private eventRoles role;
 }

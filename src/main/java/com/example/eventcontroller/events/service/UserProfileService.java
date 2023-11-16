@@ -9,8 +9,11 @@ import com.example.eventcontroller.events.repository.UserProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+
+@Transactional
 @Service
 public class UserProfileService {
 
@@ -30,39 +33,43 @@ public class UserProfileService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found with ID: " + userId));
 
-        UserProfile userProfile = new UserProfile(createProfileDTO.getFirstName(), createProfileDTO.getSecondName(), createProfileDTO.getAge(), createProfileDTO.getRole(), user);
+        UserProfile userProfile = new UserProfile(createProfileDTO.getFirstName(), createProfileDTO.getSecondName(), createProfileDTO.getAge(), user);
         return userProfileRepository.save(userProfile);
     }
-    public void updateProfile(Long profileId, Long userId, UpdateProfileDTO updateProfileDTO) {
-        UserProfile existingProfile = userProfileRepository.findById(profileId)
-                .filter(profile -> profile.getUser().getId().equals(userId))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Профиль не найден с ID: " + profileId));
+    public void updateProfile(Long userId, UpdateProfileDTO updateProfileDTO) {
 
+        UserProfile existingProfile = userProfileRepository.getUserProfileByUserId(userId);
         if (updateProfileDTO.getFirstName() != null) {
             existingProfile.setFirstName(updateProfileDTO.getFirstName());
         }
-
         if (updateProfileDTO.getSecondName() != null) {
             existingProfile.setSecondName(updateProfileDTO.getSecondName());
         }
-
-        if (updateProfileDTO.getAge()!=0) {
+        if (updateProfileDTO.getAge()!=null)
+        {
             existingProfile.setAge(updateProfileDTO.getAge());
         }
-
 
         userProfileRepository.save(existingProfile);
     }
 
 
 
-    public UserProfile getProfileByUserId(Long id) {
-        return userProfileRepository.getUserProfileByUserId(id);
+
+
+    public void deleteProfile(Long userId) {
+        try {
+
+
+                userProfileRepository.deleteUserProfileByUser_Id(userId);
+                System.out.println("Profile deleted successfully");
+
+        } catch (Exception e) {
+            System.out.println("Error deleting profile: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ошибка при удалении профиля");
+        }
     }
 
-    public void deleteProfile(Long profileId) {
-        // Дополнительная логика при удалении профиля
-        userProfileRepository.deleteById(profileId);
-    }
+
 }
 

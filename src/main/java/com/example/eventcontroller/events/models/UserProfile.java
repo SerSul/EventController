@@ -1,7 +1,9 @@
 package com.example.eventcontroller.events.models;
 
+import com.example.eventcontroller.auth.models.Role;
 import com.example.eventcontroller.auth.models.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,13 +15,13 @@ import java.util.Set;
 @Entity
 @Data
 @NoArgsConstructor
+@JsonIgnoreProperties("user")
 public class UserProfile {
 
-    public UserProfile(String firstName, String secondName, int age, eventRoles role, User user) {
+    public UserProfile(String firstName, String secondName, int age, User user) {
         this.firstName = firstName;
         this.secondName = secondName;
         this.age = age;
-        this.role = role;
         this.user = user;
     }
 
@@ -32,17 +34,26 @@ public class UserProfile {
     private int age;
 
     @Enumerated(EnumType.STRING)
-    private eventRoles role;
 
-    @OneToOne
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
-    @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Event> organizedEvents = new HashSet<>();
+    @JoinTable(
+            name = "organised_events",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_profile_id")
+    )
+    @ManyToMany
+    private Set<Event> organisedEvents = new HashSet<>();
 
-    @ManyToMany(mappedBy = "registeredUsers", cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "registered_to_event",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_profile_id")
+    )
+    @ManyToMany
     private Set<Event> events = new HashSet<>();
 }
 

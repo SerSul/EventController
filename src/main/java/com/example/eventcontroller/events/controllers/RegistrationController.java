@@ -1,36 +1,53 @@
 package com.example.eventcontroller.events.controllers;
 
-//import com.example.eventcontroller.events.service.RegistrationService;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.web.bind.annotation.PostMapping;
-//import org.springframework.web.bind.annotation.RequestBody;
-//import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.RestController;
-//
-//@RestController
-//@RequestMapping("/registration")
-//public class RegistrationController {
-//
-//    private final RegistrationService registrationService;
-//
-//    public RegistrationController( RegistrationService registrationService) {
-//        this.registrationService = registrationService;
-//
-//    }
-//
-//    @PostMapping("/register")
-//    public ResponseEntity<?> registerUser(@RequestBody RegistrationDTO registrationDTO) {
-//        authService.registerUser(registrationDTO);
-//        return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
-//    }
-//
-//    @PostMapping("/cancel")
-//    public ResponseEntity<?> cancelRegistration(@RequestBody CancellationDTO cancellationDTO) {
-//        authService.cancelRegistration(cancellationDTO);
-//        return ResponseEntity.ok("Registration canceled successfully");
-//    }
-//
-//    // Other registration-related endpoints
-//
-//}
+import com.example.eventcontroller.auth.security.jwt.JwtUtils;
+import com.example.eventcontroller.events.payload.response.MessageResponse;
+import com.example.eventcontroller.events.service.EventRegistrationService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@SecurityRequirement(name = "JWT")
+@RequestMapping("/registration")
+public class RegistrationController {
+
+    private final EventRegistrationService eventRegistrationService;
+
+    @Autowired
+    public RegistrationController(EventRegistrationService eventRegistrationService) {
+        this.eventRegistrationService = eventRegistrationService;
+
+    }
+
+    @PostMapping("/registerUserForEvent/{eventId}")
+    public ResponseEntity<?> registerUserForEvent(@RequestHeader(value = "Authorization") String authorizationHeader, @PathVariable Long eventId) {
+        try {
+           MessageResponse response = eventRegistrationService.registerUserForEvent(authorizationHeader, eventId);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            MessageResponse response = new MessageResponse("error", "Ошибка при регистрации на мероприятие. Попробуйте позже");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+
+    @DeleteMapping("/unregisterUserFromEvent/{eventId}")
+    public ResponseEntity<?> unregisterUserFromEvent(@RequestHeader(value = "Authorization") String authorizationHeader, @PathVariable Long eventId) {
+        try {
+            MessageResponse response = eventRegistrationService.unregisterUserFromEvent(authorizationHeader, eventId);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            MessageResponse response = new MessageResponse("error", "Ошибка при отмене регистрации на мероприятие. Попробуйте позже");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+}
+
+
+

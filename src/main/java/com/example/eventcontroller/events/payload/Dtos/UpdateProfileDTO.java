@@ -6,5 +6,5 @@ import lombok.Data;
 public class UpdateProfileDTO {
     private String firstName;
     private String secondName;
-    private int age;
+    private Integer age;
 }

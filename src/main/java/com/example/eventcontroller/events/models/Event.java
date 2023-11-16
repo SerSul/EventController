@@ -26,16 +26,6 @@ public class Event {
     private String description;
     private boolean registrationOpen;
 
-    @ManyToOne
-    @JoinColumn(name = "organizer_id")
-    private UserProfile organizer;
 
-    @ManyToMany
-    @JoinTable(
-            name = "event_users",
-            joinColumns = @JoinColumn(name = "event_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_profile_id")
-    )
-    private Set<UserProfile> registeredUsers = new HashSet<>();
+
 }
-
