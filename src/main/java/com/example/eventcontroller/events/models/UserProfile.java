@@ -34,27 +34,10 @@ public class UserProfile {
     private int age;
 
     @Enumerated(EnumType.STRING)
-
-
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private User user;
 
-    @JoinTable(
-            name = "organised_events",
-            joinColumns = @JoinColumn(name = "event_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_profile_id")
-    )
-    @ManyToMany
-    private Set<Event> organisedEvents = new HashSet<>();
-
-    @JoinTable(
-            name = "registered_to_event",
-            joinColumns = @JoinColumn(name = "event_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_profile_id")
-    )
-    @ManyToMany
-    private Set<Event> events = new HashSet<>();
 }
 
 

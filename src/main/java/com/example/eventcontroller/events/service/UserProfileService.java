@@ -3,8 +3,7 @@ package com.example.eventcontroller.events.service;
 import com.example.eventcontroller.auth.models.User;
 import com.example.eventcontroller.auth.repository.UserRepository;
 import com.example.eventcontroller.events.models.UserProfile;
-import com.example.eventcontroller.events.payload.Dtos.CreateProfileDTO;
-import com.example.eventcontroller.events.payload.Dtos.UpdateProfileDTO;
+import com.example.eventcontroller.events.payload.Dtos.ProfileDTO;
 import com.example.eventcontroller.events.repository.UserProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,7 +25,7 @@ public class UserProfileService {
         this.userRepository = userRepository;
     }
 
-    public UserProfile createProfile(CreateProfileDTO createProfileDTO, Long userId) {
+    public UserProfile createProfile(ProfileDTO createProfileDTO, Long userId) {
         if (userProfileRepository.existsByUserId(userId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Профиль уже существует для данного пользователя");
         }
@@ -36,18 +35,18 @@ public class UserProfileService {
         UserProfile userProfile = new UserProfile(createProfileDTO.getFirstName(), createProfileDTO.getSecondName(), createProfileDTO.getAge(), user);
         return userProfileRepository.save(userProfile);
     }
-    public void updateProfile(Long userId, UpdateProfileDTO updateProfileDTO) {
+    public void updateProfile(Long userId, ProfileDTO profileDTO) {
 
         UserProfile existingProfile = userProfileRepository.getUserProfileByUserId(userId);
-        if (updateProfileDTO.getFirstName() != null) {
-            existingProfile.setFirstName(updateProfileDTO.getFirstName());
+        if (profileDTO.getFirstName() != null) {
+            existingProfile.setFirstName(profileDTO.getFirstName());
         }
-        if (updateProfileDTO.getSecondName() != null) {
-            existingProfile.setSecondName(updateProfileDTO.getSecondName());
+        if (profileDTO.getSecondName() != null) {
+            existingProfile.setSecondName(profileDTO.getSecondName());
         }
-        if (updateProfileDTO.getAge()!=null)
+        if (profileDTO.getAge()!=null)
         {
-            existingProfile.setAge(updateProfileDTO.getAge());
+            existingProfile.setAge(profileDTO.getAge());
         }
 
         userProfileRepository.save(existingProfile);

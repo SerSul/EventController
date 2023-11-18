@@ -3,19 +3,20 @@ package com.example.eventcontroller.events.controllers;
 
 import com.example.eventcontroller.auth.security.jwt.JwtUtils;
 import com.example.eventcontroller.events.models.UserProfile;
-import com.example.eventcontroller.events.payload.Dtos.CreateProfileDTO;
-import com.example.eventcontroller.events.payload.Dtos.UpdateProfileDTO;
+import com.example.eventcontroller.events.payload.Dtos.ProfileDTO;
 import com.example.eventcontroller.events.payload.response.MessageResponse;
 
 import com.example.eventcontroller.events.service.UserProfileService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @SecurityRequirement(name = "JWT")
+@PreAuthorize("isAuthenticated()")
 @RequestMapping("/api/profiles")
 public class UserProfileController {
 
@@ -31,7 +32,7 @@ public class UserProfileController {
     }
 
     @PostMapping("/createProfile")
-    public ResponseEntity<?> createProfile(@RequestBody CreateProfileDTO createProfileDTO, @RequestHeader(value = "Authorization") String authorizationHeader) {
+    public ResponseEntity<?> createProfile(@RequestBody ProfileDTO createProfileDTO, @RequestHeader(value = "Authorization") String authorizationHeader) {
         try {
             Long userId = jwtUtils.getUserIdFromJwtToken(authorizationHeader);
             UserProfile userProfile = userProfileService.createProfile(createProfileDTO, userId);
@@ -48,11 +49,11 @@ public class UserProfileController {
 
 
     @PutMapping("/updateProfile")
-    public ResponseEntity<?> updateProfile(@RequestBody UpdateProfileDTO updateProfileDTO, @RequestHeader(value = "Authorization") String authorizationHeader) {
+    public ResponseEntity<?> updateProfile(@RequestBody ProfileDTO profileDTO, @RequestHeader(value = "Authorization") String authorizationHeader) {
         try {
             Long userId = jwtUtils.getUserIdFromJwtToken(authorizationHeader);
 
-            userProfileService.updateProfile(userId, updateProfileDTO);
+            userProfileService.updateProfile(userId, profileDTO);
 
             MessageResponse response = new MessageResponse("success", "Профиль успешно обновлен");
             return ResponseEntity.ok(response);

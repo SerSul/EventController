@@ -42,12 +42,12 @@ public class EventRegistrationService {
         }
 
 
-        if (existingProfile.getEvents().contains(event)) {
+        if (event.getParticipants().contains(existingProfile)) {
             return new MessageResponse("error", "Пользователь уже зарегестрирован");
         }
 
 
-        existingProfile.getEvents().add(event);
+        event.getParticipants().add(existingProfile);
         userProfileRepository.save(existingProfile);
         return new MessageResponse("success", "Пользователь успешно зарегестрирован");
     }
@@ -64,11 +64,11 @@ public class EventRegistrationService {
         }
 
 
-        if (!existingProfile.getEvents().contains(event)) {
+        if (!event.getParticipants().contains(existingProfile)) {
             return new MessageResponse("error", "Пользователь не был зарегистрирован на это событие");
         }
 
-        existingProfile.getEvents().remove(event);
+        event.getParticipants().remove(existingProfile);
         userProfileRepository.save(existingProfile);
 
         return new MessageResponse("success", "Регистрация на мероприятие отменена успешно");

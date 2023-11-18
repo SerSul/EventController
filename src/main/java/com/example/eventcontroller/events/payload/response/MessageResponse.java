@@ -19,4 +19,13 @@ public class MessageResponse {
         this.message = message;
         this.object=object;
     }
+
+    public MessageResponse(String status, Object object) {
+        this.status = status;
+        this.object = object;
+    }
+
+    public MessageResponse() {
+
+    }
 }

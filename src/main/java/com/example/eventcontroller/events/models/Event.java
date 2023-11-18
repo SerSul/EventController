@@ -13,7 +13,7 @@ import java.util.Set;
 @Entity
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
+
 public class Event {
 
     @Id
@@ -26,6 +26,28 @@ public class Event {
     private String description;
     private boolean registrationOpen;
 
+    public Event(String name, LocalDateTime date, String location, String description) {
+        this.name = name;
+        this.date = date;
+        this.location = location;
+        this.description = description;
+        this.registrationOpen = true;
+    }
 
 
+    @JoinTable(
+            name = "events_organisers",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_profile_id")
+    )
+    @ManyToMany
+    private Set<UserProfile> event_organisers = new HashSet<>();
+
+    @JoinTable(
+            name = "registered_to_event",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_profile_id")
+    )
+    @ManyToMany
+    private Set<UserProfile> participants  = new HashSet<>();
 }
